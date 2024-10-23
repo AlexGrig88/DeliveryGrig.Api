@@ -7,20 +7,20 @@ namespace DeliveryGrig.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class OrdersController : ControllerBase
     {
 
-        private readonly ApplicationContext _dbContext;
+        private readonly DataContext _dataContext;
 
-        public ValuesController(ApplicationContext context)
+        public OrdersController(DataContext context)
         {
-            _dbContext = context;
+            _dataContext = context;
         }
 
         [HttpGet("test")]
         public List<Order> Test()
         {
-            return _dbContext.Orders.ToList();
+            return _dataContext.Orders.ToList();
         }
 
     }

@@ -11,6 +11,7 @@
         
         public Order(int id, double weight, string district, DateTime deliveryTime)
         {
+            Id = id;
             Weight = weight;
             District = district;
             DeliveryTime = deliveryTime;
