@@ -1,0 +1,23 @@
+﻿* {
+    background-color:antiquewhite
+}
+
+.title_header {
+    text-align: center;
+    color: blue
+
+}
+
+.table, th, td {
+    border: 1px solid black;
+}
+
+.table {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td {
+    text-align: center;
+}

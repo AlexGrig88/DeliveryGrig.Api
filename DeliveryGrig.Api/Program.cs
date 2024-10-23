@@ -1,5 +1,4 @@
 using DeliveryGrig.Api.Data;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +10,9 @@ builder.Services.AddSingleton<DataContext>();   // регистрирую класс источника д
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 

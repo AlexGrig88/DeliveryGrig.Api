@@ -10,17 +10,17 @@ namespace DeliveryGrig.Api.Controllers
     public class OrdersController : ControllerBase
     {
 
-        private readonly DataContext _dataContext;
+        private readonly DataContext _dbContext;
 
         public OrdersController(DataContext context)
         {
-            _dataContext = context;
+            _dbContext = context;
         }
 
-        [HttpGet("test")]
-        public List<Order> Test()
+        [HttpGet("all")]
+        public List<Order> GetAllOrders()
         {
-            return _dataContext.Orders.ToList();
+            return _dbContext.Orders.ToList();
         }
 
     }

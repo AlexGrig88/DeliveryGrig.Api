@@ -16,5 +16,25 @@
             District = district;
             DeliveryTime = deliveryTime;
         }
+
+        public Order(params string[] fieldsValues)
+        {
+            if (fieldsValues.Length != 0) {
+                try {
+                    Id = Convert.ToInt32(fieldsValues[0]);
+                    Weight = Convert.ToDouble(fieldsValues[1]);
+                    District = fieldsValues[2];
+                    var partsOfTime = fieldsValues[3].Split('-', ' ', ':').Select(p => Convert.ToInt32(p)).ToArray();
+                    DeliveryTime = new DateTime(partsOfTime[0], partsOfTime[1], partsOfTime[2],
+                        partsOfTime[3], partsOfTime[4], partsOfTime[5]);
+                }
+                catch (FormatException ex) {
+                    Console.WriteLine("Не удалось распарсить значение.\n" + ex.Message);
+                    throw;
+                }
+            }
+        }
+
+        public override string ToString() => $"Order (Id = {Id}; Weight = {Weight}; District = {District}; DeliveryTime = {DeliveryTime})";
     }
 }
