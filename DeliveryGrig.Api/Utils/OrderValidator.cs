@@ -27,7 +27,7 @@ namespace DeliveryGrig.Api.Utils
                 return false;
             }
             if (!_dataContext.Districts.Any(d => d == district)) {
-                message = "Такого района не существует.";
+                message = "Район доставки не найден.";
                 return false;
             }
             return true;
@@ -40,14 +40,24 @@ namespace DeliveryGrig.Api.Utils
                 message = "Поле должно иметь значение.";
                 return false;
             }
-            var yearReg = $"({DateTime.Now.Year}|{DateTime.Now.Year + 1})";            
-            var monthReg = "(0[1-9]|1[0-2])";               
-            var dayReg = "(0[1-9]|1[0-9]|2[0-9]|3[0-1])";    //  день парсится не совсем корректно (для всех мес. 31 день), но данную погрешность не пропустит первая проверка в условии if 
-            var hourReg = "([0-1][0-9]|2[0-3])";           
-            var minSecReg = "([0-5][0-9])";                                      
-            var deliveryTimeRegex = new Regex($"^{yearReg}-{monthReg}-{dayReg} {hourReg}:{minSecReg}:{minSecReg}$");  // для более узкой специализации, которая зависит от бизнес-требований 
-            if (!DateTime.TryParse(firstDeliveryDateTime, out var resultTime) || !deliveryTimeRegex.IsMatch(firstDeliveryDateTime)) {
-                message = $"Некорректный формат для поля {nameof(firstDeliveryDateTime)}. Требуется формат вида: yyyy-MM-dd HH:mm:ss";
+           
+            if (!DateTime.TryParse(firstDeliveryDateTime, out var resultTime)) {
+                message = "Невозможно распарсить время доставки, проверьте формат вводимых данных и корректность значений времени." +
+                    "Требуется формат вида: yyyy-MM-dd HH:mm:ss";
+                return false;
+            }
+
+            var yyyy = @"(\d{4})";
+            var dd = @"(\d{2})";
+            var deliveryTimeRegex = new Regex($"^{yyyy}-{dd}-{dd} {dd}:{dd}:{dd}$");   
+            if (!deliveryTimeRegex.IsMatch(firstDeliveryDateTime)) {
+                message = $"Проверьте формат и разделители между числами. Требуется формат вида: yyyy-MM-dd HH:mm:ss";
+                return false;
+            }
+
+            var recievedYear = int.Parse(firstDeliveryDateTime.Split('-')[0]);
+            if (recievedYear < DateTime.Now.Year || recievedYear > (DateTime.Now.Year + 1)) {   // более узкая специализации фильтра, которая зависит от бизнес-требований
+                message = $"Измените год доставки. Доставка осуществляется в пределах текущего {DateTime.Now.Year} года и на следующий.";
                 return false;
             }
             return true;

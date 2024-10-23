@@ -13,8 +13,8 @@ namespace DeliveryGrig.Api.Utils
 
         public OrderFilter SetupFromDto(OrderFilterDto filterDto)
         {
-            CityDistrict = filterDto.CityDistrict;
-            FirstDeliveryDateTime = DateTime.Parse(filterDto.FirstDeliveryDateTime);
+            CityDistrict = filterDto._cityDistrict;
+            FirstDeliveryDateTime = DateTime.Parse(filterDto._firstDeliveryDateTime);
             return this;
         }
 

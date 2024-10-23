@@ -40,7 +40,7 @@ namespace DeliveryGrig.Api.Data
             string[] bases = { "Nord", "West", "East", "South" };
             return Enumerable
                 .Range(0, bases.Length * 4)
-                .Select(i => $"{bases[i % 4]}{postfix * (i % 4 + 1)}");
+                .Select(i => $"{bases[i % 4]}{postfix * (i / 4 + 1)}");
         }
     }
 }

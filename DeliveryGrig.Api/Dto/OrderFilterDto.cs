@@ -2,7 +2,7 @@
 {
     public class OrderFilterDto
     {
-        public string CityDistrict { get; init; }
-        public string FirstDeliveryDateTime { get; init; }
+        public string _cityDistrict { get; init; }
+        public string _firstDeliveryDateTime { get; init; }
     }
 }

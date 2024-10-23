@@ -24,19 +24,19 @@ namespace DeliveryGrig.Api.Controllers
         }
 
         [HttpGet("all")]
-        public List<Order> GetAllOrders()
+        public IActionResult GetAllOrders()
         {
-            return _dbContext.Orders.ToList();
+            return Ok(_dbContext.Orders.ToList());
         }
 
         [HttpPost("filter")]
         public IActionResult GetFilteredOrders([FromBody] OrderFilterDto filterDto)
         {
             var errorMessage = "";
-            if (!_orderValidator.ValidateDistrict(filterDto.CityDistrict, out errorMessage)) {
+            if (!_orderValidator.ValidateDistrict(filterDto._cityDistrict, out errorMessage)) {
                 return BadRequest(errorMessage);
             }
-            if (!_orderValidator.ValidateFirstDeliveryTime(filterDto.FirstDeliveryDateTime, out errorMessage)) {
+            if (!_orderValidator.ValidateFirstDeliveryTime(filterDto._firstDeliveryDateTime, out errorMessage)) {
                 return BadRequest(errorMessage);
             }
             var orders = _filter.SetupFromDto(filterDto)
