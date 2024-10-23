@@ -1,6 +1,6 @@
 ﻿namespace DeliveryGrig.Api.Dto
 {
-    public class OrderFilterDto
+    public record class OrderFilterDto
     {
         public string _cityDistrict { get; init; }
         public string _firstDeliveryDateTime { get; init; }

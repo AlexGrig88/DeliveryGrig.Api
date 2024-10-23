@@ -5,6 +5,7 @@ namespace DeliveryGrig.Api.Utils
 {
     public class OrderValidator
     {
+        public const string Success = "Success";
         private readonly DataContext _dataContext;
 
         public OrderValidator(DataContext context) => _dataContext = context;
@@ -21,11 +22,12 @@ namespace DeliveryGrig.Api.Utils
 
         public bool ValidateDistrict(string district, out string message)
         {
-            message = "Success";
+            message = Success;
             if (string.IsNullOrEmpty(district)) {
-                message = "Поле должно иметь значение.";
+                message = "Поле \"Район\" должно иметь значение.";
                 return false;
             }
+            
             if (!_dataContext.Districts.Any(d => d == district)) {
                 message = "Район доставки не найден.";
                 return false;
@@ -35,9 +37,9 @@ namespace DeliveryGrig.Api.Utils
 
         public bool ValidateFirstDeliveryTime(string firstDeliveryDateTime, out string message)
         {
-            message = "Success";
+            message = Success;
             if (string.IsNullOrEmpty(firstDeliveryDateTime)) {
-                message = "Поле должно иметь значение.";
+                message = "Поле \"Дата и время доставки\" должно иметь значение.";
                 return false;
             }
            

@@ -7,13 +7,40 @@
 </head>
 <body>
     <h1 class="title_header">Welcom To Amazing Delivery From Grig!</h1>
+    <hr />
+    <h3 class="center-aligh">Параметры заказа:</h3>
+    <div class="input-data center-aligh">
+        <input type="hidden" id="userId" />
+        <p>
+            Район:<br />
+            <input id="district" placeholder="Nord300" />
+        </p>
+        <p>
+            Дата и время доставки:<br />
+            <input id="deliveryTime" placeholder="2024-10-05 19:00:30" />
+        </p>
+        <p>
+            <button id="applyBtn">Применить фильтр</button>
+        </p>
+    </div>
+
+    <h3 class="center-aligh">Список всех заказов:</h3>
     <table class="table">
         <thead><tr><th>Id</th><th>Вес</th><th>Район</th><th>Время доставки</th></tr></thead>
-        <tbody>
+        <tbody class="tbody_all_orders">
         </tbody>
     </table>
+
+    <h3 class="center-aligh">Список отфильтрованных заказов:</h3>
+    <div class="container-table-2">
+        <table class="table">
+            <thead><tr><th>Id</th><th>Вес</th><th>Район</th><th>Время доставки</th></tr></thead>
+            <tbody class="tbody_filtered_orders">
+            </tbody>
+        </table>
+    </div>
     <script src="js/script1.js">
-       
+
     </script>
 </body>
 </html>

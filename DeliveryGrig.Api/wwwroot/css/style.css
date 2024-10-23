@@ -1,5 +1,5 @@
 ﻿* {
-    background-color:antiquewhite
+    background-color:antiquewhite;
 }
 
 .title_header {
@@ -20,4 +20,20 @@
 
 td {
     text-align: center;
+}
+
+.center-aligh {
+    text-align: center;
+}
+
+#applyBtn {
+    background-color: aqua;
+    cursor: pointer
+}
+
+.error_mark {
+    color:red;
+    font-size: 24px;
+    font-weight:900;
+    text-decoration:dashed;
 }
