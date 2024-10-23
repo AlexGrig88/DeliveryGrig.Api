@@ -8,10 +8,18 @@ namespace DeliveryGrig.Api.Data
         private readonly IWebHostEnvironment _env;
 
         public IEnumerable<Order> Orders { get; set; }
+        public IEnumerable<string> Districts { 
+            get => GenerateValidDistrict().ToList();  // имитация получения списка существующих районов из бд для правила валидации
+        }
+
         public DataContext(IWebHostEnvironment environment)
         {
             _env = environment;
             Orders = ReadOrdersFromFile("init_data.csv");
+            foreach (var item in Districts)
+            {
+                Console.WriteLine(item);
+            }
         }
 
         public IEnumerable<Order> ReadOrdersFromFile(string fileName)
@@ -28,6 +36,15 @@ namespace DeliveryGrig.Api.Data
                 }
             }
             return orderList;
+        }
+
+        private IEnumerable<string> GenerateValidDistrict()
+        {
+            int postfix = 100;
+            string[] bases = { "Nord", "West", "East", "South" };
+            return Enumerable
+                .Range(0, bases.Length * 4)
+                .Select(i => $"{bases[i % 4]}{postfix * (i % 4 + 1)}");
         }
     }
 }
