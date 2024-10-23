@@ -16,10 +16,6 @@ namespace DeliveryGrig.Api.Data
         {
             _env = environment;
             Orders = ReadOrdersFromFile("init_data.csv");
-            foreach (var item in Districts)
-            {
-                Console.WriteLine(item);
-            }
         }
 
         public IEnumerable<Order> ReadOrdersFromFile(string fileName)

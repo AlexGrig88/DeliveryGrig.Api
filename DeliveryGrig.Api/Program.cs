@@ -1,4 +1,5 @@
 using DeliveryGrig.Api.Data;
+using DeliveryGrig.Api.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSingleton<DataContext>();   // регистрирую класс источника данных со временем жизни Singleton
+builder.Services.AddSingleton<OrderValidator>();   
+builder.Services.AddScoped<OrderFilter>();
 
 var app = builder.Build();
 
