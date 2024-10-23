@@ -39,12 +39,12 @@ namespace DeliveryGrig.Api.Utils
         {
             message = Success;
             if (string.IsNullOrEmpty(firstDeliveryDateTime)) {
-                message = "Поле \"Дата и время доставки\" должно иметь значение.";
+                message = "Поле \"Время первой доставки\" должно иметь значение.";
                 return false;
             }
            
             if (!DateTime.TryParse(firstDeliveryDateTime, out var resultTime)) {
-                message = "Невозможно распарсить время доставки, проверьте формат вводимых данных и корректность значений времени." +
+                message = "Невозможно распарсить Время первой доставки, проверьте формат вводимых данных и корректность значений времени." +
                     "Требуется формат вида: yyyy-MM-dd HH:mm:ss";
                 return false;
             }

@@ -39,6 +39,7 @@ namespace DeliveryGrig.Api.Controllers
             if (!_orderValidator.ValidateFirstDeliveryTime(filterDto._firstDeliveryDateTime, out string errorDelivery)) {
                 errorMsg += $"\n{errorDelivery}";
             }
+
             if (!string.IsNullOrEmpty(errorMsg)) {
                 return BadRequest(new ErrorMessageDto(errorMsg));
             }
@@ -47,6 +48,7 @@ namespace DeliveryGrig.Api.Controllers
                 .SetupFromDto(filterDto)
                 .Apply(_dbContext.Orders)
                 .Select(ord => new OrderDto(ord))
+                .Take(filterDto._recordsQuantity)
                 .ToList();
   
             return Ok(ordersDto);

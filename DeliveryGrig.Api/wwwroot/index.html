@@ -16,8 +16,12 @@
             <input id="district" placeholder="Nord300" />
         </p>
         <p>
-            Дата и время доставки:<br />
+            Время первой доставки:<br />
             <input id="deliveryTime" placeholder="2024-10-05 19:00:30" />
+        </p>
+        <p>
+            Колличество записей:<br />
+            <input id="recordsQuantity" type="number" min="0" max="20" value="10" />
         </p>
         <p>
             <button id="applyBtn">Применить фильтр</button>
@@ -33,7 +37,8 @@
 
     <h3 class="center-aligh">Список отфильтрованных заказов:</h3>
     <div class="container-table-2">
-        <table class="table">
+        <button id="clearOrdersBtn" style="background-color:greenyellow">Очистить данные</button>
+        <table id="filteredTable" class="table">
             <thead><tr><th>Id</th><th>Вес</th><th>Район</th><th>Время доставки</th></tr></thead>
             <tbody class="tbody_filtered_orders">
             </tbody>

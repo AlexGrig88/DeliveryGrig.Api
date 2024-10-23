@@ -4,5 +4,6 @@
     {
         public string _cityDistrict { get; init; }
         public string _firstDeliveryDateTime { get; init; }
+        public int _recordsQuantity { get; init; }
     }
 }
