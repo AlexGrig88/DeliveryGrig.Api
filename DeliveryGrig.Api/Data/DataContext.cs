@@ -7,19 +7,25 @@ namespace DeliveryGrig.Api.Data
 {
     public class DataContext
     {
+        private const string DefaultFilePath = "result_data.txt";
         private readonly IWebHostEnvironment _env;
-        private readonly string _RootPath;
+        private readonly IConfiguration _config;
+
+        public bool flagFirstRequest;
+
         public IEnumerable<Order> Orders { get; set; }
+
         public IEnumerable<string> Districts { 
             get => GenerateValidDistricts().ToList();  // имитация получения списка существующих районов из бд для правила валидации
         }
         
 
-        public DataContext(IWebHostEnvironment environment)
+        public DataContext(IWebHostEnvironment environment, IConfiguration configuration)
         {
             _env = environment;
-            _RootPath = Path.Combine(_env.WebRootPath, "data_files");
-            Orders = ReadOrdersFromFile(Path.Combine(_RootPath, "init_data.csv"));
+            _config = configuration;
+            Orders = ReadOrdersFromFile(Path.Combine(_env.WebRootPath, "data_files", "init_data.csv"));
+            flagFirstRequest = true;
         }
 
         public IEnumerable<Order> ReadOrdersFromFile(string filePath)
@@ -48,21 +54,34 @@ namespace DeliveryGrig.Api.Data
 
         public async Task SaveResultsAsync(List<Order> orders)
         {
-            FileInfo fileInfo = new FileInfo("result_data.txt");
+            var filePath = _config["PathToResultRecords:_deliveryOrder"];
+            if (string.IsNullOrEmpty(filePath)) {
+                filePath = DefaultFilePath;
+            }
+            FileInfo fileInfo = new FileInfo(filePath);
             bool isAppended = true;
             if (!fileInfo.Exists) {
                 isAppended = false;
             }
             string header = "";
-            if (!isAppended) header = "Id;Weight;District;DeliveryTime\n\n";
-            string timeStamp = $"======Time stamp of record: {DateTime.Now}======\n";
-            string resultData = header + timeStamp + string.Join("\n", orders.Select(ord => GetCsvLine(ord)).ToArray());
-            string dataSeparator = new string('=', 50);
-            using (StreamWriter writer = new StreamWriter(fileInfo.FullName, isAppended)) {
-                await writer.WriteLineAsync(resultData);
+            if (!isAppended) header = "Id\t\tWeight\t\tDistrict\t\tDeliveryTime\n";
+            string timeStamp = $"\n=========Time stamp of record: {DateTime.Now}===========\n";
+            string resultData = header + timeStamp + string.Join("\n", orders.Select(ord => GetFormatLine(ord)).ToArray());
+            try {
+                using (StreamWriter writer = new StreamWriter(fileInfo.FullName, isAppended)) {
+                    await writer.WriteLineAsync(resultData);
+                }
             }
+            catch (IOException ex) {
+                throw new IOException("Не удалось записать файл по указанному пути. Проверте корректность заданного пути.");
+            }
+
         }
 
-        private string GetCsvLine(Order order) => $"{order.Id};{order.Weight};{order.District}:{order.DeliveryTime}";
+        private string GetFormatLine(Order order)
+        {
+            return $"{string.Format("{0,-8}", order.Id)}\t{string.Format("{0,-8}", order.Weight)}" +
+                $"\t{string.Format("{0,-8}", order.District)}\t{string.Format("{0,-8}", order.DeliveryTime)}";
+        } 
     }
 }

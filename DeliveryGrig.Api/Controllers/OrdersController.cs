@@ -38,11 +38,23 @@ namespace DeliveryGrig.Api.Controllers
         [HttpPost("filter")]
         public async Task<IActionResult> GetFilteredOrders([FromBody] OrderFilterDto filterDto)
         {
+
+            var distConfig = _configuration["FilteringParams:_cityDistrict"];
+            var firstDeliveryConfig = _configuration["FilteringParams:_firstDeliveryDateTime"];
+
+            // в случае получения параметров запроса из файла конфигурации, первой запрос выполняем с конфиг параметрами, игнорируя полученные от клиента
+            if (!string.IsNullOrEmpty(distConfig) && !string.IsNullOrEmpty(firstDeliveryConfig) && _dataContext.flagFirstRequest) {
+                filterDto = new OrderFilterDto() 
+                { _cityDistrict = distConfig,
+                  _firstDeliveryDateTime = firstDeliveryConfig,
+                  _recordsQuantity = 10
+                };
+                _dataContext.flagFirstRequest = false;
+            }
+
             _logger.LogInformation($"Вызова метода POST по пути ресурса api/Orders/filter. " +
                 $"Данные для фильтрации: [_cityDistrict = \"{filterDto._cityDistrict}\", " +
                 $"_firstDeliveryDateTime = \"{filterDto._firstDeliveryDateTime}\"]");
-
-            _logger.LogDebug($"CommandLine Args: _cityDistrict={_configuration["_cityDistrict"]}; _firstDeliveryDateTime={_configuration["_firstDeliveryDateTime"]}");
 
             try {
                 _orderFilterValidator.Validate(filterDto);
@@ -62,7 +74,12 @@ namespace DeliveryGrig.Api.Controllers
                 _logger.LogError(errorMsg);
                 return NotFound(new ErrorMessageDto(errorMsg));
             }
-            await _dataContext.SaveResultsAsync(orders.ToList());   // сохранение результа в файл
+            try {
+                await _dataContext.SaveResultsAsync(orders.ToList());   // сохранение результа в файл
+            }
+            catch (IOException ex) { 
+                _logger.LogError($"{ex.Message}");
+            }
 
             return Ok(orders.Select(ord => new OrderDto(ord)).ToList());
         }
