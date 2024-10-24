@@ -50,7 +50,10 @@ namespace DeliveryGrig.Api.Controllers
                 .Select(ord => new OrderDto(ord))
                 .Take(filterDto._recordsQuantity)
                 .ToList();
-  
+
+            if (ordersDto == null || ordersDto.Count == 0) {
+                return NotFound(new ErrorMessageDto("Записей с данными параметрами фильтрации не найдено."));
+            }
             return Ok(ordersDto);
         }
 

@@ -16,6 +16,7 @@
     width: 50%;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 10px
 }
 
 td {
@@ -31,9 +32,19 @@ td {
     cursor: pointer
 }
 
+.container-table-2 {
+    display: grid;
+}
+
+#clearOrdersBtn {
+    background-color: greenyellow;
+    cursor: pointer;
+    margin: auto;
+}
+
 .error_mark {
-    color:red;
+    color: red;
     font-size: 24px;
-    font-weight:900;
-    text-decoration:dashed;
+    font-weight: 900;
+    text-decoration: dashed;
 }

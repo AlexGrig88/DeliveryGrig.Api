@@ -22,7 +22,7 @@ namespace DeliveryGrig.Api.Utils
         {
             var endDeliveryTime = FirstDeliveryDateTime.AddMinutes(30);
             return inputOrders
-                .Where(ord => (ord.DeliveryTime > FirstDeliveryDateTime && ord.DeliveryTime <= endDeliveryTime) && ord.District == CityDistrict);
+                .Where(ord => (ord.DeliveryTime >= FirstDeliveryDateTime && ord.DeliveryTime <= endDeliveryTime) && ord.District == CityDistrict);
         }
         
     }
