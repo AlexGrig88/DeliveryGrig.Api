@@ -8,7 +8,10 @@
 
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="wwwroot\data_files\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\data_files\screenshot_test_api_ui.PNG" />
   </ItemGroup>
 
 </Project>
