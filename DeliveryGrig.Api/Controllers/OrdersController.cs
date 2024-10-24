@@ -1,6 +1,7 @@
 ﻿using DeliveryGrig.Api.Data;
 using DeliveryGrig.Api.Dto;
 using DeliveryGrig.Api.Entities;
+using DeliveryGrig.Api.Exeptions;
 using DeliveryGrig.Api.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,15 @@ namespace DeliveryGrig.Api.Controllers
 
         private readonly DataContext _dataContext;
         private readonly OrderFilter _filter;
-        private readonly OrderValidator _orderValidator;
+        private readonly OrderFilterValidator _orderFilterValidator;
+        private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(DataContext context, OrderFilter orderFilter, OrderValidator orderValidator)
+        public OrdersController(DataContext context, OrderFilter orderFilter, OrderFilterValidator orderValidator, ILogger<OrdersController> logger)
         {
             _dataContext = context;
-            _orderValidator = orderValidator;
+            _orderFilterValidator = orderValidator;
             _filter = orderFilter;
+            _logger = logger;
         }
 
         [HttpGet("all")]
@@ -32,16 +35,16 @@ namespace DeliveryGrig.Api.Controllers
         [HttpPost("filter")]
         public async Task<IActionResult> GetFilteredOrders([FromBody] OrderFilterDto filterDto)
         {
-            var errorMsg = string.Empty;
-            if (!_orderValidator.ValidateDistrict(filterDto._cityDistrict, out string errorDistr)) {
-                errorMsg += errorDistr;
-            }
-            if (!_orderValidator.ValidateFirstDeliveryTime(filterDto._firstDeliveryDateTime, out string errorDelivery)) {
-                errorMsg += $"\n{errorDelivery}";
-            }
+            _logger.LogInformation($"Вызова метода POST по пути ресурса api/Orders/filter. " +
+                $"Данные для фильтрации: [_cityDistrict = \"{filterDto._cityDistrict}\", " +
+                $"_firstDeliveryDateTime = \"{filterDto._firstDeliveryDateTime}\"]");
 
-            if (!string.IsNullOrEmpty(errorMsg)) {
-                return BadRequest(new ErrorMessageDto(errorMsg));
+            try {
+                _orderFilterValidator.Validate(filterDto);
+            }
+            catch (OrderFilterException ex) {
+                _logger.LogError($"Запрос не прошёл валидацию: [{ex.Message}]");
+                return BadRequest(new ErrorMessageDto(ex.Message));
             }
 
             var orders = _filter
@@ -50,9 +53,11 @@ namespace DeliveryGrig.Api.Controllers
                 .Take(filterDto._recordsQuantity);
 
             if (orders == null || orders.Count() == 0) {
-                return NotFound(new ErrorMessageDto("Записей с данными параметрами фильтрации не найдено."));
+                var errorMsg = "Записей с данными параметрами фильтрации не найдено.";
+                _logger.LogError(errorMsg);
+                return NotFound(new ErrorMessageDto(errorMsg));
             }
-            await _dataContext.SaveResultsAsync(orders.ToList());
+            await _dataContext.SaveResultsAsync(orders.ToList());   // сохранение результа в файл
 
             return Ok(orders.Select(ord => new OrderDto(ord)).ToList());
         }

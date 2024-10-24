@@ -11,7 +11,7 @@ namespace DeliveryGrig.Api.Data
         private readonly string _RootPath;
         public IEnumerable<Order> Orders { get; set; }
         public IEnumerable<string> Districts { 
-            get => GenerateValidDistrict().ToList();  // имитация получения списка существующих районов из бд для правила валидации
+            get => GenerateValidDistricts().ToList();  // имитация получения списка существующих районов из бд для правила валидации
         }
         
 
@@ -37,7 +37,7 @@ namespace DeliveryGrig.Api.Data
             return orderList;
         }
 
-        private IEnumerable<string> GenerateValidDistrict()
+        private IEnumerable<string> GenerateValidDistricts()
         {
             int postfix = 100;
             string[] bases = { "Nord", "West", "East", "South" };
