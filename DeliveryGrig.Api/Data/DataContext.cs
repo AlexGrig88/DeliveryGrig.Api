@@ -1,26 +1,29 @@
 ﻿using DeliveryGrig.Api.Entities;
 using Microsoft.AspNetCore.Builder;
+using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DeliveryGrig.Api.Data
 {
     public class DataContext
     {
         private readonly IWebHostEnvironment _env;
-
+        private readonly string _RootPath;
         public IEnumerable<Order> Orders { get; set; }
         public IEnumerable<string> Districts { 
             get => GenerateValidDistrict().ToList();  // имитация получения списка существующих районов из бд для правила валидации
         }
+        
 
         public DataContext(IWebHostEnvironment environment)
         {
             _env = environment;
-            Orders = ReadOrdersFromFile("init_data.csv");
+            _RootPath = Path.Combine(_env.WebRootPath, "data_files");
+            Orders = ReadOrdersFromFile(Path.Combine(_RootPath, "init_data.csv"));
         }
 
-        public IEnumerable<Order> ReadOrdersFromFile(string fileName)
+        public IEnumerable<Order> ReadOrdersFromFile(string filePath)
         {
-            var filePath = Path.Combine(_env.WebRootPath, "data_files", fileName);
             var orderList = new List<Order>();
 
             using (var reader = new StreamReader(filePath)) {
@@ -42,5 +45,24 @@ namespace DeliveryGrig.Api.Data
                 .Range(0, bases.Length * 4)
                 .Select(i => $"{bases[i % 4]}{postfix * (i / 4 + 1)}");
         }
+
+        public async Task SaveResultsAsync(List<Order> orders)
+        {
+            FileInfo fileInfo = new FileInfo("result_data.txt");
+            bool isAppended = true;
+            if (!fileInfo.Exists) {
+                isAppended = false;
+            }
+            string header = "";
+            if (!isAppended) header = "Id;Weight;District;DeliveryTime\n\n";
+            string timeStamp = $"======Time stamp of record: {DateTime.Now}======\n";
+            string resultData = header + timeStamp + string.Join("\n", orders.Select(ord => GetCsvLine(ord)).ToArray());
+            string dataSeparator = new string('=', 50);
+            using (StreamWriter writer = new StreamWriter(fileInfo.FullName, isAppended)) {
+                await writer.WriteLineAsync(resultData);
+            }
+        }
+
+        private string GetCsvLine(Order order) => $"{order.Id};{order.Weight};{order.District}:{order.DeliveryTime}";
     }
 }

@@ -12,13 +12,13 @@ namespace DeliveryGrig.Api.Controllers
     public class OrdersController : ControllerBase
     {
 
-        private readonly DataContext _dbContext;
+        private readonly DataContext _dataContext;
         private readonly OrderFilter _filter;
         private readonly OrderValidator _orderValidator;
 
         public OrdersController(DataContext context, OrderFilter orderFilter, OrderValidator orderValidator)
         {
-            _dbContext = context;
+            _dataContext = context;
             _orderValidator = orderValidator;
             _filter = orderFilter;
         }
@@ -26,11 +26,11 @@ namespace DeliveryGrig.Api.Controllers
         [HttpGet("all")]
         public IActionResult GetAllOrders()
         {
-            return Ok(_dbContext.Orders.Select(ord => new OrderDto(ord)).ToList());
+            return Ok(_dataContext.Orders.Select(ord => new OrderDto(ord)).ToList());
         }
 
         [HttpPost("filter")]
-        public IActionResult GetFilteredOrders([FromBody] OrderFilterDto filterDto)
+        public async Task<IActionResult> GetFilteredOrders([FromBody] OrderFilterDto filterDto)
         {
             var errorMsg = string.Empty;
             if (!_orderValidator.ValidateDistrict(filterDto._cityDistrict, out string errorDistr)) {
@@ -44,18 +44,17 @@ namespace DeliveryGrig.Api.Controllers
                 return BadRequest(new ErrorMessageDto(errorMsg));
             }
 
-            var ordersDto = _filter
+            var orders = _filter
                 .SetupFromDto(filterDto)
-                .Apply(_dbContext.Orders)
-                .Select(ord => new OrderDto(ord))
-                .Take(filterDto._recordsQuantity)
-                .ToList();
+                .Apply(_dataContext.Orders)
+                .Take(filterDto._recordsQuantity);
 
-            if (ordersDto == null || ordersDto.Count == 0) {
+            if (orders == null || orders.Count() == 0) {
                 return NotFound(new ErrorMessageDto("Записей с данными параметрами фильтрации не найдено."));
             }
+            await _dataContext.SaveResultsAsync(orders.ToList());
 
-            return Ok(ordersDto);
+            return Ok(orders.Select(ord => new OrderDto(ord)).ToList());
         }
 
     }
