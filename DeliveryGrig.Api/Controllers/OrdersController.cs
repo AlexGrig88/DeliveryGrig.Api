@@ -54,6 +54,7 @@ namespace DeliveryGrig.Api.Controllers
             if (ordersDto == null || ordersDto.Count == 0) {
                 return NotFound(new ErrorMessageDto("Записей с данными параметрами фильтрации не найдено."));
             }
+
             return Ok(ordersDto);
         }
 
