@@ -12,18 +12,21 @@ namespace DeliveryGrig.Api.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-
+        private readonly IConfiguration _configuration;
         private readonly DataContext _dataContext;
         private readonly OrderFilter _filter;
         private readonly OrderFilterValidator _orderFilterValidator;
         private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(DataContext context, OrderFilter orderFilter, OrderFilterValidator orderValidator, ILogger<OrdersController> logger)
+        public OrdersController(DataContext context, OrderFilter orderFilter, OrderFilterValidator orderValidator,
+            ILogger<OrdersController> logger, IConfiguration configuration)
         {
             _dataContext = context;
             _orderFilterValidator = orderValidator;
             _filter = orderFilter;
             _logger = logger;
+            _configuration = configuration;
+
         }
 
         [HttpGet("all")]
@@ -38,6 +41,8 @@ namespace DeliveryGrig.Api.Controllers
             _logger.LogInformation($"Вызова метода POST по пути ресурса api/Orders/filter. " +
                 $"Данные для фильтрации: [_cityDistrict = \"{filterDto._cityDistrict}\", " +
                 $"_firstDeliveryDateTime = \"{filterDto._firstDeliveryDateTime}\"]");
+
+            _logger.LogDebug($"CommandLine Args: _cityDistrict={_configuration["_cityDistrict"]}; _firstDeliveryDateTime={_configuration["_firstDeliveryDateTime"]}");
 
             try {
                 _orderFilterValidator.Validate(filterDto);
