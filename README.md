@@ -1,2 +1,2 @@
 # DeliveryGrig.Api
-![screenshot](screenshot_test_api_ui.PNG)\
+![screenshot](DeliveryGrig.Api/wwwroot/data_files/screenshot_test_api_ui.PNG)\
