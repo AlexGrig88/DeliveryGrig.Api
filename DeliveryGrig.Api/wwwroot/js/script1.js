@@ -38,12 +38,20 @@ async function getFilteredOrders(district, firstDeliveryTime, recordsQuantity) {
         orders.forEach((order, idx) => rows.append(row(order, idx + 1)));
     }
     else {
-        
         const error = await response.json();
         const containerTable2 = document.querySelector(".container-table-2");
         const pError = document.createElement("p");
         pError.className = "center-aligh error_mark";
-        pError.textContent = error.message;
+        let errMsg = "";
+        if ("errors" in error) {
+            let a = error["errors"]["_cityDistrict"];
+            let b = error["errors"]["_firstDeliveryDateTime"];
+            errMsg = a === undefined ? b : a;
+        }
+        else {
+            errMsg = error.message
+        }
+        pError.textContent = errMsg;
         containerTable2.appendChild(pError);
     }
 
