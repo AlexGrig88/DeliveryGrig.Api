@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\data_files\screenshot_test_api_ui.PNG" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
   </ItemGroup>

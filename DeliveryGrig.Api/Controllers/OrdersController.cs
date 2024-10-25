@@ -76,7 +76,8 @@ namespace DeliveryGrig.Api.Controllers
             if (orders == null || orders.Count() == 0) {
                 var errorMsg = "Записей с данными параметрами фильтрации не найдено.";
                 _logger.LogError(errorMsg);
-                return NotFound(new ErrorMessageDto(errorMsg));
+                return NotFound(new ErrorMessageDto(errorMsg));     // семантически не совсем верно, надо использовать метод NoContent - ошибка 204,
+                                                                    // но тут для простоты оставил так
             }
 
 
