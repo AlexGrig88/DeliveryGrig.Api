@@ -11,8 +11,6 @@ namespace DeliveryGrig.Api.Data
         private readonly IWebHostEnvironment _env;
         private readonly IConfiguration _config;
 
-        public bool flagFirstRequest;
-
         public IEnumerable<Order> Orders { get; set; }
 
         public IEnumerable<string> Districts { 
@@ -25,7 +23,6 @@ namespace DeliveryGrig.Api.Data
             _env = environment;
             _config = configuration;
             Orders = ReadOrdersFromFile(Path.Combine(_env.WebRootPath, "data_files", "init_data.csv"));
-            flagFirstRequest = true;
         }
 
         public IEnumerable<Order> ReadOrdersFromFile(string filePath)

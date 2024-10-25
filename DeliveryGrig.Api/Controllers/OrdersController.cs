@@ -43,13 +43,18 @@ namespace DeliveryGrig.Api.Controllers
             var firstDeliveryConfig = _configuration["FilteringParams:_firstDeliveryDateTime"];
 
             // в случае получения параметров запроса из файла конфигурации, первой запрос выполняем с конфиг параметрами, игнорируя полученные от клиента
-            if (!string.IsNullOrEmpty(distConfig) && !string.IsNullOrEmpty(firstDeliveryConfig) && _dataContext.flagFirstRequest) {
+            if (!string.IsNullOrEmpty(distConfig) && !string.IsNullOrEmpty(firstDeliveryConfig)) {
                 filterDto = new OrderFilterDto() 
                 { _cityDistrict = distConfig,
                   _firstDeliveryDateTime = firstDeliveryConfig,
-                  _recordsQuantity = 10
+                  _recordsQuantity = 20
                 };
-                _dataContext.flagFirstRequest = false;
+            }
+
+            if (filterDto._recordsQuantity <= 0 || filterDto._recordsQuantity > 20) {
+                var msg = $"Запрос не прошёл валидацию: Колличество записей должно быть в диапазоне [0:20]";
+                _logger.LogError(msg);
+                return BadRequest(new ErrorMessageDto(msg));
             }
 
             _logger.LogInformation($"Вызова метода POST по пути ресурса api/Orders/filter. " +
@@ -64,8 +69,7 @@ namespace DeliveryGrig.Api.Controllers
                 return BadRequest(new ErrorMessageDto(ex.Message));
             }
 
-            var orders = _filter
-                .SetupFromDto(filterDto)
+            var orders = _filter.SetupFromDto(filterDto)
                 .Apply(_dataContext.Orders)
                 .Take(filterDto._recordsQuantity);
 
@@ -74,6 +78,8 @@ namespace DeliveryGrig.Api.Controllers
                 _logger.LogError(errorMsg);
                 return NotFound(new ErrorMessageDto(errorMsg));
             }
+
+
             try {
                 await _dataContext.SaveResultsAsync(orders.ToList());   // сохранение результа в файл
             }
