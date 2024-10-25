@@ -1,6 +1,5 @@
 # DeliveryGrig.Api
-Проект по ТЗ .NET Junior выполнен в виде Web Api. Основная функциональность приложения содержится в контроллере OrdersController и в классах фильтрации и валидации OrderFilter и OrderFilterValidator\
-и в классе контекста данных DataContext.\
+Проект по ТЗ .NET Junior выполнен в виде Web Api. Основная функциональность приложения содержится в контроллере OrdersController и в классах фильтрации и валидации OrderFilter, OrderFilterValidatorи в классе контекста данных DataContext.\
 Источник данных файл init_data.csv (wwwroot/datafiles/init_data.csv).\
 Валидация районов происходит по принципу имеющегося списка существующих районов, который генерируется на лету.\
 
